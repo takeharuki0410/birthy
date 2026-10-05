@@ -1,0 +1,286 @@
+/* Birthy keeps movement brief and tied to an action, with one ambient balloon type. */
+:root {
+  --motion-quick: 150ms;
+  --motion-normal: 220ms;
+  --motion-gentle: 280ms;
+  --ease-birthy: cubic-bezier(.22, .7, .25, 1);
+}
+
+.app-shell h1,
+.app-shell .section-title,
+.app-shell .home-intro h1 {
+  font-weight: 700;
+}
+.app-shell .brand,
+.app-shell .onboarding-welcome-copy .brand-large {
+  font-family: var(--font-birthy), sans-serif;
+  font-weight: 700;
+  letter-spacing: -.035em;
+}
+.app-shell .birthday-hero-label {
+  font-family: var(--font-birthy), sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: .025em;
+}
+.app-shell .birthday-profile h1 { letter-spacing: .04em; }
+
+.app-main { animation: birthy-screen-in var(--motion-normal) var(--ease-birthy); }
+.app-main .screen-enter { animation: none; }
+.today-list > .today-card,
+.circle-list > .circle-card,
+.received-messages > .received-message,
+.wall-messages > .wall-message {
+  animation: birthy-card-in var(--motion-gentle) var(--ease-birthy) both;
+}
+.today-list > :nth-child(2), .circle-list > :nth-child(2),
+.received-messages > :nth-child(2), .wall-messages > :nth-child(2) { animation-delay: 35ms; }
+.today-list > :nth-child(3), .circle-list > :nth-child(3),
+.received-messages > :nth-child(3), .wall-messages > :nth-child(3) { animation-delay: 65ms; }
+.today-list > :nth-child(n + 4), .circle-list > :nth-child(n + 4),
+.received-messages > :nth-child(n + 4), .wall-messages > :nth-child(n + 4) { animation-delay: 85ms; }
+
+.app-shell :is(.button, .icon-button, .reactions button, .balloon-presets button,
+  .quick-action, .compact-accept, .circle-card, .settings-entry, .nav-item, .message-like) {
+  transition: transform var(--motion-quick) var(--ease-birthy),
+    opacity var(--motion-quick) ease, color var(--motion-quick) ease,
+    background-color var(--motion-quick) ease;
+}
+.app-shell :is(.button, .icon-button, .reactions button, .balloon-presets button,
+  .quick-action, .compact-accept, .circle-card, .settings-entry, .nav-item, .message-like):active {
+  transform: scale(.97);
+}
+.app-shell .toggle { transition: background-color var(--motion-normal) ease; }
+.app-shell .toggle span { transition: transform var(--motion-normal) var(--ease-birthy); }
+.app-shell .nav-item.active svg { animation: birthy-icon-pop var(--motion-normal) var(--ease-birthy); }
+.app-shell .reactions button.selected { animation: birthy-icon-pop var(--motion-normal) var(--ease-birthy); }
+.message-like[aria-pressed="true"] svg, .message-like.is-liked svg,
+.like-pop { animation: birthy-heart-pop var(--motion-gentle) var(--ease-birthy); }
+.app-shell .success-check, .app-shell .onboarding-success-check,
+.app-shell .report-confirm > svg,
+.app-shell .editor-feedback-success > svg { animation: birthy-success-in var(--motion-gentle) var(--ease-birthy) both; }
+.app-shell .onboarding-id-check svg { animation: birthy-icon-pop var(--motion-normal) ease; }
+.app-shell .onboarding-step-content { animation: birthy-card-in var(--motion-normal) var(--ease-birthy); }
+
+.modal { margin: auto; }
+.modal[open] { animation: birthy-dialog-in var(--motion-normal) var(--ease-birthy); }
+.modal[open]::backdrop { animation: birthy-backdrop-in var(--motion-quick) ease; }
+.modal .modal-content { padding-bottom: max(22px, env(safe-area-inset-bottom)); }
+@media (max-width: 599px) {
+  .app-shell .social-search input { font-size: 16px; }
+  .modal {
+    position: fixed;
+    inset: auto 0 0;
+    margin: 0 auto;
+    width: min(430px, 100%);
+    max-width: 430px;
+    max-height: 88dvh;
+    border-radius: 25px 25px 0 0;
+  }
+  .modal[open] { animation-name: birthy-sheet-in; }
+}
+
+.birthy-motion-tabs,
+.social-tabs[data-active-index],
+.gifts-tabs[data-active-index] { position: relative; }
+.birthy-motion-tabs {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+  --tab-count: 2;
+  --active-tab: 0;
+}
+.birthy-motion-tabs > button {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  min-height: 43px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 2px;
+}
+.birthy-motion-tabs > button[aria-selected="true"] { color: #3489ff; }
+.birthy-tab-indicator {
+  position: absolute;
+  pointer-events: none;
+  height: 2px;
+  width: calc(100% / var(--tab-count));
+  bottom: -1px;
+  left: 0;
+  transition: transform var(--motion-normal) var(--ease-birthy);
+  transform: translateX(calc(100% * var(--active-tab)));
+}
+.birthy-tab-indicator::after {
+  content: "";
+  display: block;
+  margin-inline: 8%;
+  height: 2px;
+  border-radius: 4px;
+  background: #529cff;
+}
+.app-shell .social-tabs[data-active-index] button.active::after { display: none; }
+.app-shell .gifts-tabs[data-active-index] > button[aria-selected=true] { border-color: transparent; }
+.social-tabs[data-active-index]::after,
+.gifts-tabs[data-active-index]::after {
+  content: "";
+  position: absolute;
+  width: 42%;
+  left: 4%;
+  bottom: -1px;
+  height: 2px;
+  background: #529cff;
+  border-radius: 4px;
+  pointer-events: none;
+  transition: transform var(--motion-normal) var(--ease-birthy);
+  transform: translateX(0);
+}
+.social-tabs[data-active-index="1"]::after,
+.gifts-tabs[data-active-index="1"]::after { transform: translateX(119.05%); }
+
+.birthy-confetti {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 170px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 3;
+}
+.birthy-confetti > i {
+  position: absolute;
+  top: 5px;
+  left: var(--piece-x);
+  width: 4px;
+  height: 7px;
+  border-radius: 1px;
+  background: #bbdbff;
+  opacity: 0;
+  animation: birthy-confetti-fall 300ms var(--ease-birthy) var(--piece-delay) both;
+}
+.birthy-confetti > i:nth-child(3n) { background: #ffc3de; }
+.birthy-confetti > i:nth-child(3n + 1) { background: #d7c2ff; }
+.birthy-confetti-complete { height: 300px; }
+.app-shell .onboarding-confetti i {
+  animation: birthy-static-confetti-in 300ms var(--ease-birthy) both;
+}
+.app-shell .onboarding-confetti i:nth-child(3n) { animation-delay: 45ms; }
+.app-shell .onboarding-confetti i:nth-child(3n + 1) { animation-delay: 90ms; }
+.app-shell .onboarding-confetti i:nth-child(n + 11) { display: none; }
+
+.birthy-balloon-flight {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 3;
+}
+.birthy-balloon-flight > span {
+  position: absolute;
+  left: var(--flight-x);
+  bottom: 14%;
+  width: var(--flight-size);
+  height: calc(var(--flight-size) * 1.18);
+  border-radius: 50% 50% 46% 46%;
+  background: radial-gradient(circle at 28% 24%, #fff9, #bcdfff 50%, #a1cbf4);
+  opacity: 0;
+  animation: birthy-balloon-rise 700ms var(--ease-birthy) var(--flight-delay) both;
+}
+.birthy-balloon-flight > span:nth-child(3n) {
+  background: radial-gradient(circle at 28% 24%, #fff9, #ffd0e4 50%, #f5b2d0);
+}
+.birthy-balloon-flight > span:nth-child(3n + 1) {
+  background: radial-gradient(circle at 28% 24%, #fff9, #ddd3ff 50%, #c8b7f4);
+}
+.birthy-balloon-flight > span::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: calc(50% - 1px);
+  width: 1px;
+  height: 35px;
+  background: #b9c9e399;
+}
+.app-shell .celebration-success { position: relative; overflow: hidden; }
+.app-shell .balloon-art { animation-duration: 7s; }
+.app-shell .birthday-hero::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  width: 29px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 27% 24%, #fff8, #d5d0ff90 75%);
+  right: 16%;
+  top: 58%;
+  animation: birthy-ambient-float 8s ease-in-out infinite;
+}
+.app-shell .wall-message.is-revealed,
+.app-shell .birthday-card-reveal { animation: birthy-card-open var(--motion-gentle) var(--ease-birthy) both; }
+
+@keyframes birthy-screen-in {
+  from { opacity: .35; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes birthy-card-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes birthy-icon-pop {
+  0% { transform: scale(.92); }
+  55% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes birthy-heart-pop {
+  0% { transform: scale(.9); }
+  45% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+@keyframes birthy-success-in {
+  0% { opacity: 0; transform: scale(.7); }
+  65% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes birthy-dialog-in {
+  from { opacity: 0; transform: translateY(8px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes birthy-sheet-in {
+  from { opacity: .5; transform: translateY(32px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes birthy-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes birthy-confetti-fall {
+  0% { opacity: 0; transform: translateY(-8px) rotate(0); }
+  30% { opacity: .8; }
+  100% { opacity: 0; transform: translate(var(--piece-drift), 110px) rotate(var(--piece-turn)); }
+}
+@keyframes birthy-static-confetti-in {
+  from { opacity: 0; translate: 0 -12px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes birthy-balloon-rise {
+  0% { opacity: 0; transform: translateY(10px) scale(.85); }
+  20% { opacity: .85; }
+  100% { opacity: 0; transform: translate(var(--flight-drift), -260px) scale(1); }
+}
+@keyframes birthy-ambient-float {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+@keyframes birthy-card-open {
+  from { opacity: .15; transform: perspective(700px) rotateX(-8deg) translateY(4px); transform-origin: top; }
+  to { opacity: 1; transform: perspective(700px) rotateX(0) translateY(0); transform-origin: top; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .birthy-confetti, .birthy-balloon-flight { display: none; }
+}

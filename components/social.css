@@ -1,0 +1,131 @@
+.social-content { padding-top: 7px; }
+.incoming-invite { border: 1px solid #d8eaff; background: #f2f8ff; padding: 13px; border-radius: 14px; margin-bottom: 16px; }
+.incoming-invite strong { font-size: 12px; }
+.incoming-invite p { font-size: 11px; line-height: 1.7; margin: 7px 0; }
+.social-tabs { display: flex; width: 100%; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+.social-tabs button { flex: 1; position: relative; min-height: 43px; border: 0; background: none; color: var(--muted); font-size: 12px; font-weight: 600; padding: 10px 2px; }
+.social-tabs button.active { color: #3489ff; }
+.social-tabs button.active::after { content: ""; position: absolute; height: 2px; background: #529cff; bottom: -1px; left: 8%; right: 8%; border-radius: 4px; }
+.quiet-count { display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; min-width: 16px; height: 16px; padding: 0 4px; font-size: 10px; border-radius: 10px; color: #5e7fa7; background: #eaf2fb; }
+.social-search { display: flex; align-items: center; gap: 9px; background: #f1f5f9; border: 1px solid #e9eef5; border-radius: 14px; padding: 0 12px; color: #64748b; min-height: 44px; margin-bottom: 16px; }
+.social-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--text); width: 100%; padding: 11px 0; font-size: 13px; }
+.social-search input::placeholder { color: #8797ad; }
+.social-search:focus-within { outline: 2px solid #b7d9ff; outline-offset: 1px; }
+.social-actions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-bottom: 20px; }
+.quick-action { border: 0; border-radius: 16px; min-height: 89px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; font-size: 11px; color: #438bfc; }
+.quick-blue { background: #eaf5ff; }
+.quick-green { color: #03a949; background: #eafaf1; }
+.quick-purple { color: #926cec; background: #f2edff; }
+.line-mark { display: inline-flex; font-size: 9px; font-weight: 800; width: 33px; height: 27px; border-radius: 50%; align-items: center; justify-content: center; background: #06c755; color: white; position: relative; }
+.line-mark::after { content: ""; position: absolute; width: 7px; height: 7px; background: #06c755; bottom: -2px; left: 9px; clip-path: polygon(0 0,100% 0,0 100%); }
+.social-people { overflow: hidden; }
+.social-person { padding: 14px 13px; display: flex; align-items: center; gap: 10px; min-width: 0; }
+.social-person + .social-person { border-top: 1px solid var(--border); }
+.person-main { flex: 1; display: flex; align-items: center; gap: 12px; text-align: left; border: 0; background: transparent; min-width: 0; padding: 0; }
+.person-main > span, .circle-member { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.person-main strong, .circle-member strong { font-size: 13px; font-weight: 650; }
+.person-main small, .circle-member small { color: var(--muted); font-size: 11px; }
+.request-actions { display: flex; align-items: center; gap: 2px; }
+.compact-accept { border: 1px solid #b9dbff; color: #338cff; background: #ecf6ff; border-radius: 12px; font-size: 11px; font-weight: 600; padding: 9px 12px; white-space: nowrap; }
+.compact-accept:disabled { opacity: .55; cursor: default; }
+.social-feedback { font-size: 12px; color: #477b94; background: #f0f7fc; border-radius: 12px; padding: 12px 14px; line-height: 1.65; overflow-wrap: anywhere; }
+.social-footnote { text-align: center; padding: 10px 7px; font-size: 11px; line-height: 1.75; }
+.invitation-qr { width: min(230px,100%); display: block; margin: 18px auto; border: 1px solid var(--border); border-radius: 14px; padding: 8px; background: white; }
+.invite-profile { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 6px; }
+.invite-profile strong { font-size: 15px; }
+.invite-url { font-size: 12px; }
+.stack-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.circle-list { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+.circle-card { border: 1px solid var(--border); border-radius: 15px; display: flex; align-items: center; gap: 12px; padding: 14px 12px; background: white; text-align: left; color: var(--text); }
+.circle-card > span:nth-child(2) { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.circle-card strong { font-size: 13px; }
+.circle-card small { font-size: 11px; color: var(--muted); }
+.circle-icon { background: #f2edff; border-radius: 13px; width: 43px; height: 43px; display: flex; align-items: center; justify-content: center; color: #926cec; }
+.circle-title { margin: 20px 0 9px; font-size: 19px; }
+.circle-member { flex: 1; }
+.text-link { border: 0; padding: 3px 0; background: transparent; color: #458ce3; font-size: 12px; cursor: pointer; }
+.notice-list { overflow: hidden; }
+.notice-row { display: flex; align-items: center; gap: 10px; background: white; color: var(--text); width: 100%; border: 0; padding: 15px 11px; text-align: left; min-height: 79px; }
+.notice-row + .notice-row { border-top: 1px solid var(--border); }
+.notice-unread { background: #fcfdff; }
+.notice-text { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.notice-text > span { font-size: 12px; line-height: 1.55; }
+.notice-text small { color: #8d9eb3; font-size: 10px; }
+.notice-row > svg { color: #7896b4; flex-shrink: 0; }
+.notice-symbol { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 42px; height: 42px; color: #699ee4; background: #edf6ff; border-radius: 50%; }
+.notice-symbol-balloon { color: #ff87b0; background: #fff0f6; }
+.unread-dot { width: 5px; height: 5px; border-radius: 50%; background: #83b6ee; flex-shrink: 0; }
+.mark-all { display: block; margin: 15px auto 0; font-size: 11px; }
+.my-profile { text-align: center; padding: 11px 0 19px; border-radius: 22px; background: radial-gradient(ellipse at 50% 0,#edf8ff 0,transparent 67%); }
+.my-profile > .avatar { margin: 0 auto 12px; border: 3px solid white; box-shadow: 0 4px 16px #9db7d52b; }
+.my-profile h2 { font-size: 18px; font-weight: 700; margin: 0 0 5px; }
+.my-profile p { margin: 0; }
+.my-birthday { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 12px; color: #7487a3; padding-top: 10px; }
+.my-birthday svg { color: #ed98ba; }
+.profile-stats { display: grid; grid-template-columns: 1fr 1fr; margin: 17px 35px 0; }
+.profile-stats a { display: flex; flex-direction: column; align-items: center; gap: 5px; text-decoration: none; }
+.profile-stats a + a { border-left: 1px solid var(--border); }
+.profile-stats strong { font-size: 19px; color: var(--text); }
+.profile-stats span { font-size: 11px; color: var(--muted); }
+.received-button { margin-bottom: 19px; width: 100%; font-size: 12px; }
+.received-button svg:last-child { margin-left: auto; }
+.settings-menu { overflow: hidden; }
+.settings-entry { display: flex; align-items: center; gap: 11px; color: #506582; width: 100%; padding: 14px 14px; font-size: 12px; text-decoration: none; text-align: left; border: 0; background: white; }
+.settings-entry + .settings-entry { border-top: 1px solid var(--border); }
+.settings-entry > span { flex: 1; min-width: 0; }
+.settings-entry > svg { flex-shrink: 0; }
+.settings-entry > svg:last-child { color: #91a7c1; }
+.settings-entry:focus-visible { position: relative; outline: 2px solid #a8d0ff; outline-offset: -3px; border-radius: 9px; }
+@media (hover: hover) { .settings-entry:hover { background: #f9fbff; } }
+.settings-entry-detail { padding-top: 16px; padding-bottom: 16px; }
+.settings-entry small { display: block; font-size: 10px; color: #8b9bb0; margin-top: 5px; }
+.my-circles { margin-top: 22px; }
+.my-circles .section-title { font-size: 13px; }
+.my-circles > p { font-size: 11px; line-height: 1.85; }
+.circle-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.circle-chips a { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #9174c5; background: #f4f0fd; border-radius: 10px; padding: 9px 11px; text-decoration: none; }
+.settings-content { padding-top: 16px; }
+.settings-form { display: flex; flex-direction: column; gap: 11px; }
+.field-label { display: block; margin-top: 12px; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: #506583; }
+.profile-upload { position: relative; width: 88px; margin: 3px auto 0; }
+.upload-button { position: absolute; bottom: 0; right: -1px; color: white; background: #6baeff; border: 3px solid white; border-radius: 50%; width: 31px; height: 31px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.upload-button input { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.upload-button:focus-within { outline: 2px solid #88bfff; outline-offset: 3px; }
+.upload-help { text-align: center; margin-top: 1px; font-size: 10px; }
+.editor-symbol { display: flex; align-items: center; justify-content: center; margin: 3px auto 4px; width: 61px; height: 61px; border-radius: 21px; color: #ee91b8; background: #fff1f7; }
+.editor-symbol-blue { color: #73aaff; background: #eef6ff; }
+.settings-form .editor-hint { font-size: 11px; line-height: 1.85; margin: 2px 0 12px; }
+.settings-form .editor-storage { font-size: 10px; text-align: center; margin-top: 1px; }
+.editor-feedback { display: flex; align-items: flex-start; gap: 7px; }
+.editor-feedback > svg { flex-shrink: 0; margin-top: 2px; }
+.editor-feedback-success { color: #438a70; background: #f0faf5; }
+.id-input-wrap { position: relative; display: flex; align-items: center; }
+.id-input-wrap > span { position: absolute; left: 13px; color: #5b7290; font-size: 15px; }
+.id-input-wrap .input { padding-left: 31px; }
+.id-status { display: flex; align-items: center; gap: 4px; min-height: 18px; margin: 0; font-size: 11px; }
+.id-status-available, .id-status-unchanged { color: #16aa5d; }
+.id-status-taken, .id-status-invalid, .id-status-error { color: #c7778a; }
+.date-input { min-width: 0; max-width: 100%; display: block; }
+.settings-toggles { padding: 0 16px; }
+.settings-toggles .toggle-row { gap: 12px; }
+.settings-toggles .toggle-row label { display: block; font-size: 12px; line-height: 1.75; }
+.settings-toggles .toggle-row p { font-size: 10px; line-height: 1.65; }
+.settings-toggles .toggle-row + .toggle-row { border-top: 1px solid var(--border); }
+.settings-toggles .toggle { flex-shrink: 0; }
+.privacy-note { display: flex; align-items: flex-start; gap: 10px; background: #fff5f9; border: 1px solid #ffe6ef; color: #837083; border-radius: 14px; padding: 13px; margin: 16px 0; }
+.privacy-note svg { flex-shrink: 0; color: #e59aba; margin-top: 3px; }
+.privacy-note p { margin: 0; font-size: 11px; line-height: 1.8; }
+.settings-content > .muted { font-size: 11px; line-height: 1.85; }
+.account-line { display: flex; gap: 13px; align-items: center; padding: 18px 14px; margin-bottom: 23px; }
+.account-line > span:nth-child(2) { flex: 1; }
+.account-line strong { font-size: 13px; display: block; }
+.account-line small { font-size: 10px; display: block; margin-top: 4px; color: var(--muted); }
+.account-line .text-link { font-size: 10px; }
+.settings-content .settings-form + .settings-entry { margin-top: 24px; border: 1px solid var(--border); border-radius: 14px; }
+.delete-account { display: block; margin: 29px auto 0; border: 0; background: transparent; color: #bd7a87; font-size: 11px; padding: 10px; }
+.contact-card, .legal-placeholder { text-align: center; padding: 28px 18px; }
+.contact-card .notice-symbol, .legal-placeholder > svg { margin: 0 auto 17px; color: #6a9cd6; }
+.contact-card h2, .legal-placeholder h2, .legal-placeholder h3 { font-size: 15px; margin-bottom: 14px; }
+.contact-card p, .legal-placeholder p { line-height: 1.9; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+@media (max-width: 350px) { .social-person { padding: 13px 10px; gap: 8px; } .person-main { gap: 8px; } .compact-accept { padding: 8px 10px; } .notice-row { gap: 8px; padding: 14px 9px; } .notice-text > span { font-size: 11px; } .social-actions { gap: 8px; } .settings-entry { font-size: 11px; padding-left: 11px; padding-right: 11px; } .account-line { gap: 9px; padding: 15px 11px; } }
