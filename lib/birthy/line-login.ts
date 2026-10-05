@@ -1,7 +1,15 @@
-export type LineLoginResult = {
-  displayName: string;
-  pictureUrl: string;
-};
+import type { Profile } from "@/types/birthy";
+
+export type LineLoginResult =
+  | {
+      registered: true;
+      profile: Profile;
+    }
+  | {
+      registered: false;
+      displayName: string;
+      pictureUrl: string;
+    };
 
 export async function beginLineLogin(): Promise<LineLoginResult> {
   if (typeof window === "undefined") {
@@ -9,7 +17,6 @@ export async function beginLineLogin(): Promise<LineLoginResult> {
   }
 
   const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
-
   if (!liffId) {
     throw new Error("NEXT_PUBLIC_LIFF_ID is not configured");
   }
@@ -22,46 +29,46 @@ export async function beginLineLogin(): Promise<LineLoginResult> {
   });
 
   if (!liff.isLoggedIn()) {
-    liff.login({
-      redirectUri: window.location.href,
-    });
-
-    // LINEログイン画面へ遷移するまで待機
+    liff.login({ redirectUri: window.location.href });
     return new Promise<LineLoginResult>(() => {});
   }
 
   const idToken = liff.getIDToken();
-
   if (!idToken) {
     throw new Error("LINE ID token is unavailable");
   }
 
   const response = await fetch("/api/auth/line/verify", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     credentials: "same-origin",
-    body: JSON.stringify({
-      idToken,
-    }),
+    body: JSON.stringify({ idToken }),
   });
 
   const data = (await response.json().catch(() => null)) as
     | {
         ok?: boolean;
-        profile?: {
+        registered?: boolean;
+        profile?: Profile & {
           displayName?: string;
           pictureUrl?: string;
         };
       }
     | null;
 
-  if (!response.ok || !data?.ok) {
+  if (!response.ok || !data?.ok || typeof data.registered !== "boolean") {
     throw new Error("LINE server verification failed");
   }
 
+  if (data.registered) {
+    if (!data.profile?.nickname || !data.profile.birthday) {
+      throw new Error("Birthy profile is unavailable");
+    }
+    return { registered: true, profile: data.profile };
+  }
+
   return {
+    registered: false,
     displayName: data.profile?.displayName ?? "",
     pictureUrl: data.profile?.pictureUrl ?? "",
   };

@@ -7,7 +7,7 @@ import { createInitialState, INITIAL_STATE } from "./mock-data";
 import { birthdayYear } from "./date";
 import { getBirthdayWindow, isCardRevealed, tokyoDateKey } from "./birthday-cards";
 
-const STORAGE_KEY = "birthy-ui-v1";
+const STORAGE_KEY = "birthy-ui-v2";
 let snapshot: BirthyState = INITIAL_STATE;
 let loaded = false;
 const listeners = new Set<() => void>();
@@ -53,6 +53,7 @@ export function useBirthyStore() {
 }
 export const actions = {
   register(profile: Profile) { update((s) => ({ ...s, profile, registered: true })); },
+  clearAuthentication() { update(() => createInitialState(new Date())); },
   updateProfile(profile: Partial<Profile>) { update((s) => ({ ...s, profile: { ...s.profile, ...profile } })); },
   updatePreferences(preferences: Partial<Preferences>) { update((s) => ({ ...s, preferences: { ...s.preferences, ...preferences } })); },
   sendMessage(input: BirthdayCardInput, balloonCount = 0): WallMessage | null {

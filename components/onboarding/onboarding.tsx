@@ -46,17 +46,20 @@ export function Onboarding({ onComplete }: { onComplete: () => void }) {
   try {
     const line = await beginLineLogin();
 
+      if (line.registered) {
+        actions.register(line.profile);
+        onComplete();
+        return;
+      }
+
     updateProfile({
       nickname: profile.nickname.trim() || line.displayName,
-      avatar: profile.avatar || line.pictureUrl,
+        avatar: line.pictureUrl || profile.avatar,
     });
-
     move(1);
   } catch (error) {
     console.error("LINE login failed:", error);
-    setFormError(
-      "LINEで始められませんでした。もう一度お試しください",
-    );
+      setFormError("LINEで始められませんでした。もう一度お試しください");
   } finally {
     setBusy(false);
   }
@@ -70,12 +73,42 @@ export function Onboarding({ onComplete }: { onComplete: () => void }) {
     updateProfile({ nickname: profile.nickname.trim(), birthyId: id.normalizedId });
     move(step + 1);
   }
-  function complete() {
+  async function complete() {
     if (completionStarted.current) return;
     completionStarted.current = true;
     setBusy(true);
-    actions.register({ ...profile, nickname: profile.nickname.trim(), birthyId: id.normalizedId });
-    onComplete();
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          nickname: profile.nickname.trim(),
+          avatar: profile.avatar,
+          birthday: profile.birthday,
+          birthyId: id.normalizedId,
+          showFullBirthday: profile.showFullBirthday,
+        }),
+      });
+
+      const data = (await response.json().catch(() => null)) as
+        | { ok?: boolean; error?: string; profile?: Profile }
+        | null;
+
+      if (!response.ok || !data?.ok || !data.profile) {
+        throw new Error(data?.error || "登録に失敗しました");
+      }
+
+      actions.register(data.profile);
+      onComplete();
+    } catch (error) {
+      completionStarted.current = false;
+      setStep(5);
+      setFormError(error instanceof Error ? error.message : "登録に失敗しました。もう一度お試しください");
+    } finally {
+      setBusy(false);
+    }
   }
 
   if (step === 0) return <section className="onboarding onboarding-welcome" aria-label="Birthyへようこそ">

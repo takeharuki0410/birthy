@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Onboarding } from "@/components/onboarding/onboarding";
 import { Connections } from "@/components/connections/connections";
@@ -17,19 +17,67 @@ import { Home } from "./home";
 import { Button } from "./ui";
 import { BirthyStoreProvider, useBirthyStore } from "@/lib/birthy/store";
 import { BirthdayClockProvider } from "@/lib/birthy/use-birthday-clock";
-import type { Person, Tab } from "@/types/birthy";
+import type { Person, Profile, Tab } from "@/types/birthy";
 
 let lastVisitedPath: string | undefined;
+
+type AuthStatus = "loading" | "anonymous" | "authenticated";
+
 export function BirthyApp({ initialNow }: { initialNow: string }) {
   return <BirthyStoreProvider initialNow={initialNow}><BirthdayClockProvider initialNow={initialNow}><BirthyScreens/></BirthdayClockProvider></BirthyStoreProvider>;
 }
+
 function BirthyScreens() {
-  const pathname = usePathname(); const router = useRouter(); const { state } = useBirthyStore();
+  const pathname = usePathname();
+  const router = useRouter();
+  const { state, actions } = useBirthyStore();
+  const [authStatus, setAuthStatus] = useState<AuthStatus>("loading");
   const [,view,id,subview] = pathname.split("/");
   const onboard = !view || view === "onboarding";
   const active: Tab = view === "connections" ? "connections" : view === "notifications" ? "notifications" : ["mypage","settings","received"].includes(view) ? "mypage" : "home";
   const noNav = onboard || ["success"].includes(view) || (view === "birthday" && Boolean(subview));
   const openBirthday = (personId: string) => router.push(`/birthday/${personId}`);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function restoreSession() {
+      try {
+        const response = await fetch("/api/auth/me", {
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        const data = (await response.json().catch(() => null)) as
+          | { authenticated?: boolean; profile?: Profile }
+          | null;
+
+        if (cancelled) return;
+
+        if (response.ok && data?.authenticated && data.profile) {
+          actions.register(data.profile);
+          setAuthStatus("authenticated");
+        } else {
+          actions.clearAuthentication();
+          setAuthStatus("anonymous");
+        }
+      } catch {
+        if (!cancelled) {
+          actions.clearAuthentication();
+          setAuthStatus("anonymous");
+        }
+      }
+    }
+
+    void restoreSession();
+    return () => { cancelled = true; };
+  }, [actions]);
+
+  useEffect(() => {
+    if (authStatus === "loading") return;
+    if (authStatus === "anonymous" && !onboard) router.replace("/");
+    if (authStatus === "authenticated" && onboard) router.replace("/home");
+  }, [authStatus, onboard, router]);
+
   useEffect(() => {
     if (lastVisitedPath === "/mypage" && pathname.startsWith("/mypage/")) {
       window.history.replaceState({ ...window.history.state, birthyParentPath: "/mypage" }, "", window.location.href);
@@ -37,13 +85,18 @@ function BirthyScreens() {
     lastVisitedPath = pathname;
     window.scrollTo(0,0);
   }, [pathname]);
-  useEffect(() => { if (!view && state.registered) router.replace("/home"); }, [view,state.registered,router]);
+
+  if (authStatus === "loading") {
+    return <div className="app-shell"><main className="app-main no-nav"><div className="content empty-state"><p>Birthyを準備しています…</p></div></main></div>;
+  }
+
   let screen;
   const backToMyPage = () => {
     if (window.history.state?.birthyParentPath === "/mypage" && window.history.length > 1) router.back();
     else router.replace("/mypage");
   };
-  if (onboard) screen = <Onboarding onComplete={() => router.replace("/home")}/>;
+
+  if (onboard) screen = <Onboarding onComplete={() => { setAuthStatus("authenticated"); router.replace("/home"); }}/>;
   else if (view === "home") screen = <Home onOpenBirthday={openBirthday}/>;
   else if (view === "connections") screen = <Connections onOpenBirthday={openBirthday}/>;
   else if (view === "notifications") screen = <Notifications onOpenBirthday={openBirthday} onOpenConnections={() => router.push("/connections?tab=requests")} onOpenReceived={() => router.push("/received")}/>;
@@ -57,5 +110,6 @@ function BirthyScreens() {
     else if (subview === "balloons") screen = <SendBalloons person={person} onBack={() => openBirthday(id)} onSent={(count) => router.replace(`/success/sent/${count}`)}/>;
     else screen = <BirthdayPage person={person} onBack={() => router.push("/home")} onMessage={() => router.push(`/birthday/${id}/message`)} onBalloons={() => router.push(`/birthday/${id}/balloons`)} onReceived={() => router.push("/received")}/>;
   } else screen = <div className="content empty-state"><p>ページが見つかりません。</p><Button onClick={() => router.replace("/home")}>ホームへ</Button></div>;
+
   return <div className="app-shell"><main className={`app-main ${noNav ? "no-nav" : ""}`} key={pathname}>{screen}</main>{!noNav && <BottomNav active={active} unread={state.notifications.some((n) => !n.read)}/>}</div>;
 }
