@@ -23,6 +23,10 @@ let lastVisitedPath: string | undefined;
 
 type AuthStatus = "loading" | "anonymous" | "authenticated";
 
+let cachedAuthStatus: AuthStatus = "loading";
+let lastAuthCheckAt = 0;
+const AUTH_RECHECK_MS = 5 * 60 * 1000;
+
 export function BirthyApp({ initialNow }: { initialNow: string }) {
   return <BirthyStoreProvider initialNow={initialNow}><BirthdayClockProvider initialNow={initialNow}><BirthyScreens/></BirthdayClockProvider></BirthyStoreProvider>;
 }
@@ -31,7 +35,7 @@ function BirthyScreens() {
   const pathname = usePathname();
   const router = useRouter();
   const { state, actions } = useBirthyStore();
-  const [authStatus, setAuthStatus] = useState<AuthStatus>("loading");
+  const [authStatus, setAuthStatus] = useState<AuthStatus>(cachedAuthStatus);
   const [,view,id,subview] = pathname.split("/");
   const onboard = !view || view === "onboarding";
   const active: Tab = view === "connections" ? "connections" : view === "notifications" ? "notifications" : ["mypage","settings","received"].includes(view) ? "mypage" : "home";
@@ -40,6 +44,15 @@ function BirthyScreens() {
 
   useEffect(() => {
     let cancelled = false;
+
+
+    const recentlyChecked =
+      lastAuthCheckAt > 0 &&
+      Date.now() - lastAuthCheckAt < AUTH_RECHECK_MS;
+
+    if (recentlyChecked && cachedAuthStatus !== "loading") {
+      return () => { cancelled = true; };
+    }
 
     async function restoreSession() {
       try {
@@ -52,16 +65,20 @@ function BirthyScreens() {
           | null;
 
         if (cancelled) return;
+        lastAuthCheckAt = Date.now();
 
         if (response.ok && data?.authenticated && data.profile) {
+          cachedAuthStatus = "authenticated";
           actions.register(data.profile);
           setAuthStatus("authenticated");
         } else {
+          cachedAuthStatus = "anonymous";
           actions.clearAuthentication();
           setAuthStatus("anonymous");
         }
       } catch {
-        if (!cancelled) {
+        if (!cancelled && cachedAuthStatus !== "authenticated") {
+          cachedAuthStatus = "anonymous";
           actions.clearAuthentication();
           setAuthStatus("anonymous");
         }
@@ -96,7 +113,12 @@ function BirthyScreens() {
     else router.replace("/mypage");
   };
 
-  if (onboard) screen = <Onboarding onComplete={() => { setAuthStatus("authenticated"); router.replace("/home"); }}/>;
+  if (onboard) screen = <Onboarding onComplete={() => {
+    cachedAuthStatus = "authenticated";
+    lastAuthCheckAt = Date.now();
+    setAuthStatus("authenticated");
+    router.replace("/home");
+  }}/>;
   else if (view === "home") screen = <Home onOpenBirthday={openBirthday}/>;
   else if (view === "connections") screen = <Connections onOpenBirthday={openBirthday}/>;
   else if (view === "notifications") screen = <Notifications onOpenBirthday={openBirthday} onOpenConnections={() => router.push("/connections?tab=requests")} onOpenReceived={() => router.push("/received")}/>;
