@@ -1,13 +1,25 @@
 "use client";
+import { useEffect } from "react";
 import Link from "next/link";
 import { Avatar, Brand, Button, Icon } from "./ui";
 import { useBirthyStore } from "@/lib/birthy/store";
+import { fetchConnectionSnapshot } from "@/lib/birthy/connections-client";
 import { birthdayLabel, isoDate, todayInTokyo } from "@/lib/birthy/date";
 import { useBirthdayNow } from "@/lib/birthy/use-birthday-clock";
 import "./home.css";
 export function Home({ onOpenBirthday }: { onOpenBirthday: (id: string) => void }) {
-  const { state } = useBirthyStore();
+  const { state, actions } = useBirthyStore();
   const now = useBirthdayNow();
+  useEffect(() => {
+    const controller = new AbortController();
+    void fetchConnectionSnapshot(controller.signal)
+      .then((snapshot) => {
+        const people = [...snapshot.accepted, ...snapshot.incoming, ...snapshot.outgoing].map((item) => item.person);
+        actions.replaceConnectionData(people, snapshot.incoming.map((item) => item.person.id));
+      })
+      .catch(() => { /* Keep the current UI if the network is temporarily unavailable. */ });
+    return () => controller.abort();
+  }, [actions]);
   const today = todayInTokyo(now); const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
   const people = state.people.filter((p) => p.connected && !state.blocked.includes(p.id));
   const current = people.filter((p) => p.birthday.slice(5) === isoDate(today).slice(5));

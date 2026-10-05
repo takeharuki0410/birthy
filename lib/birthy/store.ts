@@ -56,6 +56,8 @@ export const actions = {
   clearAuthentication() { update(() => createInitialState(new Date())); },
   updateProfile(profile: Partial<Profile>) { update((s) => ({ ...s, profile: { ...s.profile, ...profile } })); },
   updatePreferences(preferences: Partial<Preferences>) { update((s) => ({ ...s, preferences: { ...s.preferences, ...preferences } })); },
+  replaceConnectionData(people: BirthyState["people"], requests: string[]) { update((s) => ({ ...s, people, requests })); },
+  upsertPerson(person: BirthyState["people"][number]) { update((s) => ({ ...s, people: [...s.people.filter((item) => item.id !== person.id), person] })); },
   sendMessage(input: BirthdayCardInput, balloonCount = 0): WallMessage | null {
     const recipient = input.recipientId === "self" ? snapshot.profile : snapshot.people.find((person) => person.id === input.recipientId);
     const now = new Date();
